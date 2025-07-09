@@ -53,14 +53,18 @@
 
 | 文件 | 描述 |
 |------|------|
-| `a429_cs.v` | 命令状态寄存器模块（中断控制/寄存器管理） |
-| `a429_rx.v` | ARINC 429 接收模块 |
-| `a429_tx.v` | ARINC 429 发送模块 |
-| `a429_top.v` | 单通道顶层模块 |
-| `a429_top_multi.v` | 多通道顶层模块 |
-| `bit_width_utils.v` | 位宽计算辅助模块 |
-| `a429_rx_filter.v` | 接收滤波模块（抗噪声处理） |
-| `寄存器说明.md` | 详细寄存器文档 |
+|`a429/`|
+|&nbsp;&nbsp;&nbsp;`a429_cs.v` | 命令状态寄存器模块（中断控制/寄存器管理） |
+|&nbsp;&nbsp;&nbsp;`a429_rx.v` | ARINC 429 接收模块 |
+|&nbsp;&nbsp;&nbsp;`a429_tx.v` | ARINC 429 发送模块 |
+|&nbsp;&nbsp;&nbsp;`a429_top.v` | 单通道顶层模块 |
+|&nbsp;&nbsp;&nbsp;`a429_top_multi.v` | 多通道顶层模块 |
+|&nbsp;&nbsp;&nbsp;`bit_width_utils.v` | 位宽计算辅助模块 |
+|&nbsp;&nbsp;&nbsp;`a429_rx_filter.v` | 接收滤波模块（抗噪声处理） |
+|`doc/`|
+| &nbsp;&nbsp;&nbsp;`CHANGELOG.md` | 更新日志文件 |
+| &nbsp;&nbsp;&nbsp;`寄存器说明.md` | 详细寄存器说明文档 |
+| `LICENSE` | 开源许可证 |
 | `README.md` | 本文档
 ---
 
