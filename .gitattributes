@@ -1,0 +1,2 @@
+# 忽略 Xilinx IP 的 VHDL 文件，不计入语言统计
+a429/ip_scff_fwft/** linguist-vendored
