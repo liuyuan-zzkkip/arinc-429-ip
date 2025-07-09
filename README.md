@@ -202,3 +202,12 @@ SPDX-License-Identifier: MIT
 ---
 
 让创新飞翔 - 天津深空智核助力下一代航空电子系统
+
+
+## ⚠️ 使用限制 / Usage Restriction
+
+本项目遵循 MIT 协议开源，但仅供中国大陆用户学习与非商业用途使用。严禁任何境外机构或个人使用、复制或传播本项目代码。如需授权，请联系作者。
+
+> This project is licensed under the MIT License and intended **only for educational or non-commercial use within Mainland China**. Any use by foreign individuals or organizations is **strictly prohibited**. For licensing inquiries, please contact the author.
+
+
