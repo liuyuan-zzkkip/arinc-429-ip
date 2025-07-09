@@ -7,7 +7,7 @@
 // File       : a429_top.v
 // Author     : LiuYuan
 // Description: ARINC429 Protocol Controller - Rx Module
-// Revision   : v1.1
+// Revision   : v1.3
 // =============================================================================
 `ifndef A429_RX
 `define A429_RX

@@ -6,7 +6,7 @@
 // File       : a429_top.v
 // Author     : LiuYuan
 // Description: ARINC429 Protocol Controller - Tx Module
-// Revision   : v1.1
+// Revision   : v1.3
 // =============================================================================
 `ifndef	A429_TX
 `define	A429_TX

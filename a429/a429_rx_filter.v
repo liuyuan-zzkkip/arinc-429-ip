@@ -6,7 +6,7 @@
 // File       : a429_top.v
 // Author     : LiuYuan
 // Description: ARINC429 Protocol Controller - Filter for Rx Module
-// Revision   : v1.1
+// Revision   : v1.3
 // =============================================================================
 `ifndef	A429_RX_FILTER
 `define	A429_RX_FILTER

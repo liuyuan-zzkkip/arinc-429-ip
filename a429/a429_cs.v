@@ -6,7 +6,15 @@
 // File       : a429_top.v
 // Author     : LiuYuan
 // Description: ARINC429 Protocol Controller - Cmd & Sts Register Module
-// Revision   : v1.1
+// Revision   : v1.3
+/*
+v1.3 2025-07-09
+1. rename full to fl, etc.
+2. 写清除中断改为读清除中断
+3. 更改中断置位与清除的优先级
+4. 更改中断置位逻辑
+TODO: 将普通状态信息与中断状态信息分开，不共用寄存器。共用寄存器会导致软件不方便。
+*/
 // =============================================================================
 `ifndef	A429_CS
 `define	A429_CS
@@ -146,14 +154,14 @@ else
 										begin
 											cmd <= #1 dat_i;
 										end
-									2'd2:
-										begin
-											clr_tx_irq <= #1 1;
-										end
-									2'd3:
-										begin
-											clr_rx_irq <= #1 1;
-										end
+									// 2'd2:
+									// 	begin
+									// 		clr_tx_irq <= #1 1;
+									// 	end
+									// 2'd3:
+									// 	begin
+									// 		clr_rx_irq <= #1 1;
+									// 	end
 								endcase
 							end
 						else
@@ -164,8 +172,8 @@ else
 								case(adr_i)	// synthesis parallel_case
 									2'd0:	dat_o <= #1 rf_do;
 									2'd1:	dat_o <= #1 cmd;
-									2'd2:	dat_o <= #1 txsts;
-									2'd3:	dat_o <= #1 rxsts;
+									2'd2:	begin dat_o <= #1 txsts; clr_tx_irq <= #1 1; end
+									2'd3:	begin dat_o <= #1 rxsts; clr_rx_irq <= #1 1; end
 								endcase
 							end
 					end
@@ -212,78 +220,83 @@ generate
 if(ENABLE_IRQ)
 begin
 
-reg last_tf_empty;
-reg last_tf_full;
-reg last_tf_aempty;
-reg last_tf_afull;
-reg last_rf_empty;
-reg last_rf_full;
-reg last_rf_aempty;
-reg last_rf_afull;
+reg last_tf_et;
+reg last_tf_fl;
+reg last_tf_ae;
+reg last_tf_af;
+reg last_rf_et;
+reg last_rf_fl;
+reg last_rf_ae;
+reg last_rf_af;
 always @(posedge clk_i)
 begin
-    last_tf_empty <= #1 tf_et;
-    last_tf_full <= #1 tf_fl;
-    last_tf_aempty <= #1 tf_ae;
-    last_tf_afull <= #1 tf_af;
-    last_rf_empty <= #1 rf_et;
-    last_rf_full <= #1 rf_fl;
-    last_rf_aempty <= #1 rf_ae;
-    last_rf_afull <= #1 rf_af;
+    last_tf_et <= #1 tf_et;
+    last_tf_fl <= #1 tf_fl;
+    last_tf_ae <= #1 tf_ae;
+    last_tf_af <= #1 tf_af;
+    last_rf_et <= #1 rf_et;
+    last_rf_fl <= #1 rf_fl;
+    last_rf_ae <= #1 rf_ae;
+    last_rf_af <= #1 rf_af;
 end
 
-reg pe_tf_empty;
-reg pe_tf_full;
-reg pe_tf_aempty;
-reg pe_tf_afull;
-reg pe_rf_empty;
-reg pe_rf_full;
-reg pe_rf_aempty;
-reg pe_rf_afull;
+reg pe_tf_et;
+reg pe_tf_fl;
+reg pe_tf_ae;
+reg pe_tf_af;
+reg pe_rf_et;
+reg pe_rf_fl;
+reg pe_rf_ae;
+reg pe_rf_af;
 
 always @(posedge clk_i)
 begin
-    pe_tf_empty <= #1 tf_et && !last_tf_empty;
-    pe_tf_full <= #1 tf_fl && !last_tf_full;
-    pe_tf_aempty <= #1 tf_ae && !last_tf_aempty;
-    pe_tf_afull <= #1 tf_af && !last_tf_afull;
-    pe_rf_empty <= #1 rf_et && !last_rf_empty;
-    pe_rf_full <= #1 rf_fl && !last_rf_full;
-    pe_rf_aempty <= #1 rf_ae && !last_rf_aempty;
-    pe_rf_afull <= #1 rf_af && !last_rf_afull;
+    pe_tf_et <= #1 tf_et && !last_tf_et;
+    pe_tf_fl <= #1 tf_fl && !last_tf_fl;
+    pe_tf_ae <= #1 tf_ae && !last_tf_ae;
+    pe_tf_af <= #1 tf_af && !last_tf_af;
+    pe_rf_et <= #1 rf_et && !last_rf_et;
+    pe_rf_fl <= #1 rf_fl && !last_rf_fl;
+    pe_rf_ae <= #1 rf_ae && !last_rf_ae;
+    pe_rf_af <= #1 rf_af && !last_rf_af;
+end
+
+reg pe_tf_et_last;
+reg pe_tf_fl_last;
+reg pe_tf_ae_last;
+reg pe_tf_af_last;
+reg pe_rf_et_last;
+reg pe_rf_fl_last;
+reg pe_rf_ae_last;
+reg pe_rf_af_last;
+
+always @(posedge clk_i)
+begin
+	pe_tf_et_last <= #1 pe_tf_et;
+	pe_tf_fl_last <= #1 pe_tf_fl;
+	pe_tf_ae_last <= #1 pe_tf_ae;
+	pe_tf_af_last <= #1 pe_tf_af;
+	pe_rf_et_last <= #1 pe_rf_et;
+	pe_rf_fl_last <= #1 pe_rf_fl;
+	pe_rf_ae_last <= #1 pe_rf_ae;
+	pe_rf_af_last <= #1 pe_rf_af;
 end
 
 always @(posedge clk_i)
 begin
-	if(clr_tx_irq)
-		begin
-			tx_irq[20] <= #1 0;
-			tx_irq[21] <= #1 0;
-			tx_irq[22] <= #1 0;
-			tx_irq[23] <= #1 0;
-		end
-	else
-		begin
-			if(pe_tf_empty  & cmd[ 8]) tx_irq[20] <= #1 1;
-			if(pe_tf_full   & cmd[ 9]) tx_irq[21] <= #1 1;
-			if(pe_tf_aempty & cmd[10]) tx_irq[22] <= #1 1;
-			if(pe_tf_afull  & cmd[11]) tx_irq[23] <= #1 1;
-		end
+begin
+	if((pe_tf_et | pe_tf_et_last) & cmd[ 8]) tx_irq[20] <= #1 1; else if(clr_tx_irq) tx_irq[20] <= #1 0;
+	if((pe_tf_fl | pe_tf_fl_last) & cmd[ 9]) tx_irq[21] <= #1 1; else if(clr_tx_irq) tx_irq[21] <= #1 0;
+	if((pe_tf_ae | pe_tf_ae_last) & cmd[10]) tx_irq[22] <= #1 1; else if(clr_tx_irq) tx_irq[22] <= #1 0;
+	if((pe_tf_af | pe_tf_af_last) & cmd[11]) tx_irq[23] <= #1 1; else if(clr_tx_irq) tx_irq[23] <= #1 0;
+end
 
-	if(clr_rx_irq)
-		begin
-			rx_irq[20] <= #1 0;
-			rx_irq[21] <= #1 0;
-			rx_irq[22] <= #1 0;
-			rx_irq[23] <= #1 0;
-		end
-	else
-		begin
-			if(pe_rf_empty  & cmd[12]) rx_irq[20] <= #1 1;
-			if(pe_rf_full   & cmd[13]) rx_irq[21] <= #1 1;
-			if(pe_rf_aempty & cmd[14]) rx_irq[22] <= #1 1;
-			if(pe_rf_afull  & cmd[15]) rx_irq[23] <= #1 1;
-		end
+begin
+	if((pe_rf_et | pe_rf_et_last) & cmd[12]) rx_irq[20] <= #1 1; else if(clr_rx_irq) rx_irq[20] <= #1 0;
+	if((pe_rf_fl | pe_rf_fl_last) & cmd[13]) rx_irq[21] <= #1 1; else if(clr_rx_irq) rx_irq[21] <= #1 0;
+	if((pe_rf_ae | pe_rf_ae_last) & cmd[14]) rx_irq[22] <= #1 1; else if(clr_rx_irq) rx_irq[22] <= #1 0;
+	if((pe_rf_af | pe_rf_af_last) & cmd[15]) rx_irq[23] <= #1 1; else if(clr_rx_irq) rx_irq[23] <= #1 0;
+end
 end
 
 always @(posedge clk_i)

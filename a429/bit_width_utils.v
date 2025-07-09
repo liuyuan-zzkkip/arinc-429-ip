@@ -6,7 +6,7 @@
 // File       : a429_top.v
 // Author     : LiuYuan
 // Description: ARINC429 Protocol Controller - Rx Module
-// Revision   : v1.1
+// Revision   : v1.3
 // =============================================================================
 `ifndef BIT_WIDTH_UTILS
 `define BIT_WIDTH_UTILS
