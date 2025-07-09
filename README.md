@@ -177,8 +177,8 @@ A429_TOP #(
 | ARINC 825 (CAN) | 航空电子 CAN 总线 |
 | ARINC 818 | 航空电子视频协议 |
 | UART | 通用异步收发器 |
-| TTE | 确定性以太网 (Time-Triggered Ethernet) |
-| TSN | 时间敏感网络 (Time-Sensitive Networking) |
+| TTE | 时间触发以太网 |
+| TSN | 时间敏感网络 |
 
 ---
 
