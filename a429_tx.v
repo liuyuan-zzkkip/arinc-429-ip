@@ -56,11 +56,11 @@ localparam ST1 = 1;
 localparam ST2 = 2;
 localparam ST3 = 3;
 
-localparam CYCLES = CLOCK_KHZ*10/1000/2;
-localparam MAX_COUNT = 8*CYCLES-2;
+localparam BIT_CYCLES_100K = CLOCK_KHZ*10/1000;
+localparam MAX_COUNT = 8*BIT_CYCLES_100K/2-2;
 localparam CW = `calc_cw(MAX_COUNT);
 reg  [CW  :0] count;
-wire [CW-1:0] COUNT = hi_spd ? (CYCLES-2):(8*CYCLES-2);
+wire [CW-1:0] COUNT = hi_spd ? (BIT_CYCLES_100K/2-2):(8*BIT_CYCLES_100K/2-2);
 
 reg [ 1:0] state;
 reg [ 3:0] g_num;

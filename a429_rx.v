@@ -102,16 +102,16 @@ reg[ 5:0] c_bit;
 reg[31:0] shift;
 reg       chkTO;// check time-out
 
-// localparam CLOCK_KHZ*10/1000 = CLOCK_KHZ*10/1000;
-localparam MAX_COUNT = 8*CLOCK_KHZ*10/1000*2/1-2;
+localparam BIT_CYCLES_100K = CLOCK_KHZ*10/1000;
+localparam MAX_COUNT = 8*BIT_CYCLES_100K*2/1-2;
 localparam CM = `calc_cw(MAX_COUNT);
 
 reg [CM  :0] count;
 wire[CM-1:0] MAX_GAP_TIME;
 wire[CM-1:0] MAX_BIT_TIME;
 
-assign MAX_GAP_TIME = hi_spd ? (CLOCK_KHZ*10/1000*2/1-2):(8*CLOCK_KHZ*10/1000*2/1-2);//2.0bit? take care of CM
-assign MAX_BIT_TIME = hi_spd ? (CLOCK_KHZ*10/1000*3/2-2):(8*CLOCK_KHZ*10/1000*3/2-2);//1.5bit? take care of CM
+assign MAX_GAP_TIME = hi_spd ? (BIT_CYCLES_100K*2/1-2):(8*BIT_CYCLES_100K*2/1-2);//2.0bit
+assign MAX_BIT_TIME = hi_spd ? (BIT_CYCLES_100K*3/2-2):(8*BIT_CYCLES_100K*3/2-2);//1.5bit
 
 always @(posedge clk_i)
 if(rst_i)
